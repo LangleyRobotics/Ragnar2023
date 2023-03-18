@@ -6,6 +6,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
+import edu.wpi.first.cameraserver.CameraServer;
 
 
 public class LimelightSubsystem extends SubsystemBase{
@@ -32,6 +33,7 @@ public class LimelightSubsystem extends SubsystemBase{
      */
     public LimelightSubsystem()
     {
+      CameraServer.startAutomaticCapture();
       table = NetworkTableInstance.getDefault().getTable("limelight");
       tx = table.getEntry("tx"); 
       ty = table.getEntry("ty"); 

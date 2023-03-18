@@ -109,6 +109,16 @@ public class DriveSubsystem extends SubsystemBase {
     
   }
 
+  public void setPose(Pose2d aprilPose2d) {
+    m_odometry.resetPosition(m_gyro.getRotation2d(),         
+      new SwerveModulePosition[] {
+        frontLeft.getPosition(),
+        frontRight.getPosition(),
+        rearLeft.getPosition(),
+        rearRight.getPosition()
+      }, aprilPose2d);
+  }
+  
   //Command Factory In Subsystem Test
   public SequentialCommandGroup AutoCommandFactory(Trajectory path) {
     var thetaController =
@@ -201,6 +211,8 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Current X Pose", getPose().getX());
     SmartDashboard.putNumber("Current Y Pose", getPose().getY());
     SmartDashboard.putNumber("Current Rot2D Pose", getPose().getRotation().getDegrees());
+
+  
 
     SmartDashboard.putNumber("Current Pitch", getPitch());
     SmartDashboard.putNumber("Current Roll", getRoll());

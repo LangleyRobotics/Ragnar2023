@@ -5,16 +5,16 @@ import java.util.function.Supplier;
 
 import frc.robot.subsystems.ManipulatorSubsystem;
 
-public class ClawCmd extends CommandBase{
+public class DropDownExclusiveCmd extends CommandBase{
     private final ManipulatorSubsystem manipulatorSubsystem;
     private final Supplier<Double> speedSupplier;
     //direction int is negative 1 or 1.
-    private final Supplier<Integer> directionSupplier;
+    private final int direction;
 
-    public ClawCmd(ManipulatorSubsystem manipulatorSubsystem, Supplier<Double> speedSupplier, Supplier<Integer> directionSupplier) {
+    public DropDownExclusiveCmd(ManipulatorSubsystem manipulatorSubsystem, Supplier<Double> speedSupplier, int direction) {
         this.manipulatorSubsystem = manipulatorSubsystem;
         this.speedSupplier = speedSupplier;
-        this.directionSupplier = directionSupplier;
+        this.direction = direction;
 
         addRequirements(manipulatorSubsystem);
     }
@@ -27,17 +27,17 @@ public class ClawCmd extends CommandBase{
     @Override
     public void execute() {
         double speed = speedSupplier.get();
-        int direction = directionSupplier.get();
-        double velocity = speed*direction;
+        int dir = direction;
+        double velocity = speed*dir;
 
-        manipulatorSubsystem.setClawMotor(-velocity);
-
+        manipulatorSubsystem.setIntakeMotor(velocity);
+    
     
     }
 
     @Override
     public void end(boolean interrupted) {
-        manipulatorSubsystem.stopClawMotor();
+        manipulatorSubsystem.stopIntakeMotor();
     }
 
     @Override

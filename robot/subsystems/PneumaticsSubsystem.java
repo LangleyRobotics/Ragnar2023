@@ -11,11 +11,15 @@ import frc.robot.Constants.PneumaticsConstants;
 
 public class PneumaticsSubsystem extends SubsystemBase{
     private final Solenoid sully = new Solenoid(PneumaticsModuleType.REVPH, PneumaticsConstants.kSullySolenoid);
+    private final Solenoid sally = new Solenoid(PneumaticsModuleType.REVPH, PneumaticsConstants.kSallySolenoid);
+
     private final Compressor compressor = new Compressor(1, PneumaticsModuleType.REVPH);
+
     
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Sully?", sully.get());
+        SmartDashboard.putBoolean("Sally", sally.get());
         compressor.enableDigital();
     }
 
@@ -29,6 +33,18 @@ public class PneumaticsSubsystem extends SubsystemBase{
 
     public int wheresSully() {
         return sully.getChannel();
+    }
+
+    public void toggleSally() {
+        sally.toggle();
+    }
+
+    public boolean isSallyAwake() {
+        return sally.get();
+    }
+
+    public int wheresSally() {
+        return sally.getChannel();
     }
 
 }

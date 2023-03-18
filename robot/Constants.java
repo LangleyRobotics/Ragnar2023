@@ -24,6 +24,11 @@ public final class Constants {
   public static final double kMaxAngularSpeedRadiansPerSecond = MathMethods.Tau;
   public static final double kMaxAngularAccelerationRadiansPerSecondSquared = MathMethods.Tau;
 
+  public static final class LEDConstants {
+    public static final int kAddressableLightsID = 0;
+    public static final int kAddressableLightsLength = 30;
+  }
+
   public static final class DriveConstants {
     public static final int kFrontLeftDriveMotorPort = 2;
     public static final int kRearLeftDriveMotorPort = 6;
@@ -86,6 +91,8 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
+    public static final double kSlowDriveCoefficient = 0.15;
+
   }
 
   //ID Numbers for Xbox controller buttons
@@ -96,13 +103,19 @@ public final class Constants {
     public static final int Y = 4;
     public static final int LB = 5;
     public static final int RB = 6;
+
     public static final int Maria = 7;
     public static final int Menu = 8;
+
+    public static final int L3 = 9;
+    public static final int R3 = 10;
 
     public static final int UP_ARR = 0;
     public static final int RIGHT_ARR = 90;
     public static final int DOWN_ARR = 180;
     public static final int LEFT_ARR = 270;
+
+    
   }
   
   public static final class LiftConstants {
@@ -112,10 +125,22 @@ public final class Constants {
     public static final int kTelescopeMotor = 13;
     public static final double kLiftReduction = 1/5;
 
-    public static final double kLiftOffset = -26;
-    public static final double kMaxLiftPosition = 390 + kLiftOffset;
-    public static final double kMinLiftPosition = 0 + kLiftOffset;
-    public static final double kIntakeLiftPosition = 70 + kLiftOffset;
+    public static final double kLiftOffset = 0.0;
+    public static final double kMinLiftPosition = 0.765 + kLiftOffset;
+    public static final double kIntakeLiftPosition = 0.8 + kLiftOffset;
+    public static final double kLiftEncoderBreakpoint = 0.5 + kLiftOffset;
+    public static final double kConeShelfSetPoint = 0.96 + kLiftOffset;
+    public static final double kMaxLiftPosition = 1.025 + kLiftOffset;
+
+    //DO NOT USE THESE CONSTANTS - TEST AND CALIBRATE CORRECT POSITIONS
+    public static final double kMaxLiftPositionDDInbetween = 0.765 + kLiftOffset;
+    public static final double kMinLiftPositionDDInbetween = 1.025 + kLiftOffset;
+    public static final double kMaxLiftPositionDDUpOutside = 1.025 + kLiftOffset;
+    public static final double kMinLiftPositionDDUpOutside = 0.84 + kLiftOffset;
+
+    public static final double kMaxLiftPositionDDUpInside = 0.775 + kLiftOffset;
+    public static final double kMinLiftPositionDDUpInside = 0.765 + kLiftOffset;
+
     public static final double kTelescopeSpeed = 1.00;
 
     public static final double kliftSetPointSpeedConversionFactorFar = 0.05;
@@ -170,12 +195,13 @@ public final class Constants {
   public static final class ManipulatorConstants {
     public static final int kClawMotor = 11;
     public static final int kIntakeMotor = 14;
-    public static final double kClawMotorSpeed = 0.5; //value from 0-1
+    public static final double kClawMotorSpeed = 1.00; //value from 0-1
     public static final double kIntakeMotorSpeed = 0.69; //value from 0-1
   }
 
   public static final class PneumaticsConstants {
     public static final int kSullySolenoid = 7;
+    public static final int kSallySolenoid = 0; // placeholder - see when piston installed
   }
   
   public static final class LimelightConstants {
@@ -211,9 +237,9 @@ public final class Constants {
     public static final double kPThetaController = 1;
     public static final double kAutoMaxSpeedMetersPerSecond = 3;
     public static final double kAutoMaxAccelerationMetersPerSecondSquared = 2;
-    public static final double kAutoBalanceSpeedFactor = 0.407;
-    public static final double kAutoBalanceMaxSpeedMetersPerSecond = 0.15;
-    public static final double kAutoBalanceDeadbandDegrees = 4;
+    public static final double kAutoBalanceSpeedFactor = 0.5;
+    public static final double kAutoBalanceMaxSpeedMetersPerSecond = 0.69;
+    public static final double kAutoBalanceDeadbandDegrees = 2;
     public static final double kFieldEndXCoordinate = 16.5;
 
     public static final double kLameSpeedCap = 1.0;
