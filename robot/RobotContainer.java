@@ -31,13 +31,17 @@ import frc.robot.commands.IntakeCmd;
 //import frc.robot.commands.LiftAutoCmd;
 import frc.robot.commands.LiftIntakeCmd;
 import frc.robot.commands.LiftTriggerCmd;
+import frc.robot.commands.LiftTriggerCmdBounded;
 //import frc.robot.commands.ResetLiftBoundsCmd;
 import frc.robot.commands.SwerveControllerCmd;
 import frc.robot.commands.TelescopeCmd;
 import frc.robot.commands.TelescopeWithLiftBoundless;
 import frc.robot.commands.TelescopeWithLiftCmd;
 import frc.robot.commands.outtakeAutoSeqCmdGrp;
-import frc.robot.commands.prideMonth;
+import frc.robot.commands.lightingCommands.CargoSignalCmd;
+import frc.robot.commands.lightingCommands.TransPrideCmd;
+import frc.robot.commands.lightingCommands.rainbow;
+import frc.robot.commands.lightingCommands.rainbowFromMid;
 import frc.robot.commands.RumbleCmd;
 import frc.robot.commands.SallyCmd;
 import frc.robot.commands.SullyCmd;
@@ -49,7 +53,7 @@ import frc.robot.subsystems.LimelightSubsystem;
 //import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
-import frc.robot.subsystems.epilepsySubsystem;
+import frc.robot.subsystems.lightingSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -75,7 +79,7 @@ public class RobotContainer {
   private final PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
   private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
 
-  private final epilepsySubsystem epilepsySubsystem = new epilepsySubsystem();
+  private final lightingSubsystem lightingSubsystem = new lightingSubsystem();
 
 
 
@@ -112,14 +116,16 @@ public class RobotContainer {
             () -> true));
     
     robotLift.setDefaultCommand(
-        new LiftTriggerCmd(
+        new LiftTriggerCmdBounded(
           robotLift,
           () -> operatorController.getLeftTriggerAxis(),
           () -> operatorController.getRightTriggerAxis()));
 
     robotManipulator.setDefaultCommand(new IntakeCmd(robotManipulator, () -> 0.0, 0));
 
-    epilepsySubsystem.setDefaultCommand(new prideMonth(epilepsySubsystem));
+    //lightingSubsystem.setDefaultCommand(new rainbow(lightingSubsystem));
+    //lightingSubsystem.setDefaultCommand(new TransPrideCmd(lightingSubsystem));
+    lightingSubsystem.setDefaultCommand(new CargoSignalCmd(lightingSubsystem, pneumaticsSubsystem));
 
 
     //Load in paths from Trajectories as drive commands using the AutoCommandFactory
@@ -315,9 +321,6 @@ public class RobotContainer {
     
     new JoystickButton(operatorController, Buttons.A).whileTrue(new ClawCmd(robotManipulator, 
       () -> ManipulatorConstants.kClawMotorSpeed, () -> -1));
-    
-    new POVButton(operatorController, Buttons.LEFT_ARR).whileTrue(new DropDownExclusiveCmd(robotManipulator, 
-      () -> 0.3, -1));
 
     new JoystickButton(driverController, Buttons.LB).whileTrue(new RumbleCmd(operatorController, 1, 1.00));
     //new JoystickButton(driverController, Buttons.RB).whileTrue(new RumbleCmd(operatorController, 2, 1.00));
@@ -347,7 +350,7 @@ public class RobotContainer {
     
 
     //Move arm up to optimal intake setpoint
-    new POVButton(operatorController, Buttons.DOWN_ARR).toggleOnTrue(new LiftIntakeCmd(robotLift));
+    new POVButton(operatorController, Buttons.DOWN_ARR).whileTrue(new LiftIntakeCmd(robotLift));
 
     //Cone shelf setpoint
     //new JoystickButton(operatorController, Buttons.R3).toggleOnTrue(new LiftAutoCmd(robotLift, LiftConstants.kConeShelfSetPoint));

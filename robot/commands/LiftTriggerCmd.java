@@ -37,7 +37,7 @@ public class LiftTriggerCmd extends CommandBase{
         double negativeSpeed = liftNegativeSpdFunction.get();
 
         double velocity = positiveSpeed - negativeSpeed;
-        liftSubsystem.setLiftMotor(0.5*velocity);
+        liftSubsystem.setLiftMotorNoBounds(0.5*velocity);
     } 
 
     @Override

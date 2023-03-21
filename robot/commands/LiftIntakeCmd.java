@@ -34,15 +34,17 @@ public class LiftIntakeCmd extends CommandBase{
 
         double liftPos = liftSubsystem.getLiftAbsEncoder();
         double distToIntake = LiftConstants.kIntakeLiftPosition - liftPos;
-        if (distToIntake != 0 && Math.abs(distToIntake)<0.3) {
-            liftSubsystem.setLiftMotor((1.5*distToIntake));
+        if (distToIntake!=0 && Math.abs(distToIntake) < 0.05) {
+            liftSubsystem.setLiftMotor((-MathMethods.signDouble(distToIntake)*0.25));
+        }
+        if (distToIntake>0.05 && Math.abs(distToIntake)<0.10) {
+            liftSubsystem.setLiftMotor((-5*distToIntake));
+        }
+        if (Math.abs(distToIntake) > 0.10) {
+            liftSubsystem.setLiftMotor(-MathMethods.signDouble(distToIntake)*0.5);
         }
 
-        if (Math.abs(distToIntake) > 0.3) {
-            liftSubsystem.setLiftMotor(MathMethods.signDouble(distToIntake)*0.5);
-        }
-
-        if (Math.abs(distToIntake) < 0.03) {
+        if (Math.abs(distToIntake) < 0.0008) {
             liftSubsystem.stopLiftMotor();
             isFinished = true;
         }

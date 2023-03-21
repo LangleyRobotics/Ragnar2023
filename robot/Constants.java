@@ -27,6 +27,8 @@ public final class Constants {
   public static final class LEDConstants {
     public static final int kAddressableLightsID = 0;
     public static final int kAddressableLightsLength = 30;
+    public static final int wordDisplayLength = 15;
+
   }
 
   public static final class DriveConstants {
@@ -125,9 +127,9 @@ public final class Constants {
     public static final int kTelescopeMotor = 13;
     public static final double kLiftReduction = 1/5;
 
-    public static final double kLiftOffset = 0.0;
+    public static final double kLiftOffset = -0.165;
     public static final double kMinLiftPosition = 0.765 + kLiftOffset;
-    public static final double kIntakeLiftPosition = 0.8 + kLiftOffset;
+    public static final double kIntakeLiftPosition = 0.802 + kLiftOffset;
     public static final double kLiftEncoderBreakpoint = 0.5 + kLiftOffset;
     public static final double kConeShelfSetPoint = 0.96 + kLiftOffset;
     public static final double kMaxLiftPosition = 1.025 + kLiftOffset;
@@ -163,7 +165,7 @@ public final class Constants {
     public static final double kSteerReduction = (15.0 / 32.0) * (10.0 / 60.0);
     public static final double kDriveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
     public static final int kEncoderCPR = 4096;
-    public static final double kPTurning = 0.5;
+    public static final double kPTurning = 0.2;
     public static final double kDriveEncoderRot2Meter = kDriveReduction * Math.PI * kWheelDiameterMeters * (89.0/100.0);
     public static final double kTurningEncoderRot2Rad = kSteerReduction * MathMethods.Tau;
     public static final double kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meter / 60;

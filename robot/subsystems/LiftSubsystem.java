@@ -37,7 +37,8 @@ public class LiftSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Lift Encoder Position Degrees", getLiftAbsEncoder());
+        SmartDashboard.putNumber("Lift Encoder Position No Offset", getLiftAbsEncoder());
+        SmartDashboard.putNumber("Lift Encoder Position Offset", getLiftAbsEncoder() - LiftConstants.kLiftOffset);
         SmartDashboard.putNumber("Left Lift Motor Velocity", liftMotorLeft.get());
         SmartDashboard.putNumber("Right Lift Motor Velocity", liftMotorRight.get());
         SmartDashboard.putNumber("Telescoping Motor Encoder Position", getTeleRelEnc());
@@ -59,7 +60,7 @@ public class LiftSubsystem extends SubsystemBase{
   
         try {
 
-            if(limSwDDDown.get()/*&& !limSwDDUp.get() */) { 
+            //if(limSwDDDown.get()/*&& !limSwDDUp.get() */) { 
                 //Booleans not resolved, should be when DD is in down position
                 if ((MathMethods.signDouble(velocity) == -1 && getLiftAbsEncoder() < LiftConstants.kMaxLiftPosition) || 
                     (MathMethods.signDouble(velocity) == 1 && getLiftAbsEncoder() > LiftConstants.kMinLiftPosition)) {
@@ -69,7 +70,7 @@ public class LiftSubsystem extends SubsystemBase{
                     liftMotorLeft.set(0.0);
                     liftMotorRight.set(0.0);
                 }
-           }
+          // }/
             /*if((!limSwDDDown.get() && !limSwDDUp.get()) || (limSwDDDown.get() && limSwDDUp.get())) { 
                 //Booleans not resolved, should be when DD is stuck in the middle or something fucky wucky is happening L
                 if ((MathMethods.signDouble(velocity) == -1 && getLiftAbsEncoder() < LiftConstants.kMaxLiftPositionDDInbetween) || 
@@ -81,9 +82,10 @@ public class LiftSubsystem extends SubsystemBase{
                     liftMotorRight.set(0.0);
                 }
             }*/
-            if(!limSwDDDown.get() /*&& limSwDDUp.get() */) {
+          /* 
+            if(!limSwDDDown.get() && getLiftAbsEncoder() > LiftConstants.kMinLiftPositionDDUpOutside/*&& limSwDDUp.get() *///) {
                 //Booleans not resolved, should be when DD is in up position
-                if ((MathMethods.signDouble(velocity) == -1 && getLiftAbsEncoder() < LiftConstants.kMaxLiftPositionDDUpOutside) || 
+             /*    if ((MathMethods.signDouble(velocity) == -1 && getLiftAbsEncoder() < LiftConstants.kMaxLiftPositionDDUpOutside) || 
                     (MathMethods.signDouble(velocity) == 1 && getLiftAbsEncoder() > LiftConstants.kMinLiftPositionDDUpOutside)) {
                     liftMotorLeft.set(velocity);
                     liftMotorRight.set(-velocity);
@@ -92,6 +94,20 @@ public class LiftSubsystem extends SubsystemBase{
                     liftMotorRight.set(0.0);
                 }
             }
+*/ /* 
+            if(!limSwDDDown.get() && getLiftAbsEncoder() < LiftConstants.kMinLiftPositionDDUpInside/*&& limSwDDUp.get() *///) {
+                //Booleans not resolved, should be when DD is in up position
+                /* 
+                if ((MathMethods.signDouble(velocity) == -1 && getLiftAbsEncoder() < LiftConstants.kMaxLiftPositionDDUpInside) || 
+                    (MathMethods.signDouble(velocity) == 1 && getLiftAbsEncoder() > LiftConstants.kMinLiftPositionDDUpInside)) {
+                    liftMotorLeft.set(velocity);
+                    liftMotorRight.set(-velocity);
+                } else {
+                    liftMotorLeft.set(0.0);
+                    liftMotorRight.set(0.0);
+                }
+            }
+ */
 
         } catch(Exception e) {
             System.out.println("Error: Lift Motor is Set to a value out of valid range [-1.0, 1.0]");
