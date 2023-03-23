@@ -23,7 +23,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -100,7 +102,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     new Thread( () -> {
       try {
-        Thread.sleep(1000);
+        new WaitCommand(1.0);
         zeroHeading();
         //m_gyro.setAngleAdjustment(180);
       } catch (Exception e) {
@@ -163,6 +165,7 @@ public class DriveSubsystem extends SubsystemBase {
   public boolean getGyroConnected() {
     return m_gyro.isConnected();
   }
+
 
   @Override
   public void periodic() {

@@ -28,6 +28,17 @@ public class MathMethods {
         }
     }
 
+    public static double speedMax2(double initVel, double maxSpeed, double deadband) 
+    {
+        if (Math.abs(initVel) > maxSpeed) {
+            return maxSpeed*((Math.abs(initVel))/initVel);
+        } else if (Math.abs(initVel) < deadband) {
+            return 0;
+        } else {
+            return initVel;
+        }
+    }
+
     public static int signDouble(double num) {
         return (int) (Math.abs(num)/num);
     }

@@ -41,34 +41,6 @@ public class Trajectories {
             new Pose2d(3, 0, new Rotation2d(0)),
             config);
 
-    public static final Trajectory chargeLeftBlueTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(1.70, 4.38, new Rotation2d(Math.PI/2)),
-            List.of(new Translation2d(5.56, 4.60)),
-            new Pose2d(5.22, 2.95, new Rotation2d(Math.PI/2)),
-            config);
-        
-    public static final Trajectory chargeRightBlueTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(1.70, 1.08, new Rotation2d(0)),
-            List.of(new Translation2d(3.91, 0.62), new Translation2d(5.92, 0.94)),
-            new Pose2d(5.21, 2.12, new Rotation2d(Math.PI)),
-            config);
-
-    public static final Trajectory chargeLeftRedTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(AutoConstants.kFieldEndXCoordinate - 1.70, 4.38, new Rotation2d(0)),
-            List.of(new Translation2d(AutoConstants.kFieldEndXCoordinate - 5.56, 4.60)),
-            new Pose2d(AutoConstants.kFieldEndXCoordinate - 5.22, 2.92, new Rotation2d(Math.PI)),
-            config);
-
-    public static final Trajectory chargeRightRedTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(AutoConstants.kFieldEndXCoordinate - 1.70, 1.08, new Rotation2d(0)),
-            List.of(new Translation2d(AutoConstants.kFieldEndXCoordinate - 3.91, 0.62), new Translation2d(AutoConstants.kFieldEndXCoordinate - 5.92, 0.94)),
-            new Pose2d(AutoConstants.kFieldEndXCoordinate - 5.21, 2.12, new Rotation2d(Math.PI)),
-            config);
-
     //BLUE
     //One Cargo and Balance Auto - drive to charge plate
     public static final Trajectory blueTopToCharge = 
@@ -114,9 +86,16 @@ public class Trajectories {
     //Double cargo autonomous - drive to cargo
     public static final Trajectory blueTopTo2Cargo = 
         TrajectoryGenerator.generateTrajectory(
-            new Pose2d(1.7, 4.45, new Rotation2d(Math.PI)), 
+            new Pose2d(1.7, 4.45, new Rotation2d(Math.toRadians(180.0))), 
             List.of(new Translation2d(4.2, 4.8)),
-            new Pose2d(6.7, 4.6, new Rotation2d(0)), 
+            new Pose2d(5.6, 4.0, new Rotation2d(Math.toRadians(0))), 
+            reverseConfig);
+
+    public static final Trajectory driveForwardIntake = 
+        TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))), 
+            List.of(),
+            new Pose2d(1.37, 0, new Rotation2d(Math.toRadians(0))), 
             reverseConfig);
 
     //Theoretically Impossible Without negligible air resistance and/or friction  /j
@@ -135,6 +114,8 @@ public class Trajectories {
             new Pose2d(6.7, 4.6, new Rotation2d(0)), 
             reverseConfig);
     
+
+    //Backup Auton
     public static final Trajectory backAutoRed = 
         TrajectoryGenerator.generateTrajectory(
             new Pose2d(AutoConstants.kFieldEndXCoordinate - 1.7, 4.45, new Rotation2d(0)), 

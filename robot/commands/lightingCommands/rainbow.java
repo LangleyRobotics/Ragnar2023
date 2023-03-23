@@ -21,26 +21,6 @@ public class rainbow extends CommandBase{
     @Override
     public void execute() {
         lightingSubsystem.Rainbow();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }    
-
-
-   /*     lightingSubsystem.transPride();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        lightingSubsystem.turnOff();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        */
     }
      
     @Override

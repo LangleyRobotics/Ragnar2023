@@ -21,11 +21,6 @@ public class TransPrideCmd extends CommandBase{
     @Override
     public void execute() {
         lightingSubsystem.transPride();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }    
     }
      
     @Override

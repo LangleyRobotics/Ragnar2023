@@ -34,11 +34,6 @@ public class CargoSignalCmd extends CommandBase{
             lightingSubsystem.setAllColorUniform(250, 150, 0);
         }
 
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }    
     }
      
     @Override

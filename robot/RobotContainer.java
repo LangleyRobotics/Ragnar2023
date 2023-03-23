@@ -123,9 +123,19 @@ public class RobotContainer {
 
     robotManipulator.setDefaultCommand(new IntakeCmd(robotManipulator, () -> 0.0, 0));
 
-    //lightingSubsystem.setDefaultCommand(new rainbow(lightingSubsystem));
+    
+    //Trans Pride
     //lightingSubsystem.setDefaultCommand(new TransPrideCmd(lightingSubsystem));
-    lightingSubsystem.setDefaultCommand(new CargoSignalCmd(lightingSubsystem, pneumaticsSubsystem));
+    
+    //Moveable Rainbow 
+    lightingSubsystem.setDefaultCommand(
+        new SequentialCommandGroup(new rainbow(lightingSubsystem), new WaitCommand(0.1)));
+    
+    //Moveable Rainbow from mid 
+    /* 
+    lightingSubsystem.setDefaultCommand(
+        new SequentialCommandGroup(new rainbowFromMid(lightingSubsystem), new WaitCommand(0.1)));
+    */
 
 
     //Load in paths from Trajectories as drive commands using the AutoCommandFactory
@@ -137,6 +147,7 @@ public class RobotContainer {
     SequentialCommandGroup blueTopToChargeUpCmd2 = robotDrive.AutoCommandFactory(Trajectories.blueTopToChargeUp);
 
     SequentialCommandGroup blueTopTo2CargoCmd = robotDrive.AutoCommandFactory(Trajectories.blueTopTo2Cargo);
+    SequentialCommandGroup driveForwardToIntake = robotDrive.AutoCommandFactory(Trajectories.driveForwardIntake);
     SequentialCommandGroup blueTopCargoReturnCmd = robotDrive.AutoCommandFactory(Trajectories.blueTopReturnCargo);
 
     SequentialCommandGroup redTopToChargeCmd = robotDrive.AutoCommandFactory(Trajectories.redTopToCharge);
@@ -147,7 +158,7 @@ public class RobotContainer {
     
 
     //Create telescope and lift commands
-    ParallelRaceGroup teleAutoRetractWithArmResist = new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> -0.3, () -> 0.0, false).withTimeout(0.2);
+    ParallelRaceGroup teleAutoRetractWithArmResist = new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> -1, () -> -0.3, () -> 0.0, false).withTimeout(0.2);
     ParallelRaceGroup armDownTele = new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> 0.90, () -> 0.0, false).withTimeout(2.5);
 
     //Create piston toggle command
@@ -156,12 +167,11 @@ public class RobotContainer {
     //Create command sequence that stows telescope, lift, and drop-down intake
     SequentialCommandGroup retractManipulators = new SequentialCommandGroup(teleAutoRetractWithArmResist, armDownTele, sullyTheMandalorian);
     SequentialCommandGroup retractManipulators2 = new SequentialCommandGroup(
-      new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> -0.3, () -> 0.0, false).withTimeout(1.5),
-      new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> 0.90, () -> 0.0, false).withTimeout(2.5),
-      new SullyCmd(pneumaticsSubsystem));
+      new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> -1, () -> -0.3, () -> 0.0, false).withTimeout(1.5),
+      new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> -1, () -> 0.90, () -> 0.0, false).withTimeout(2.5));
     SequentialCommandGroup retractManipulators3 = new SequentialCommandGroup(
-      new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> -0.3, () -> 0.0, false).withTimeout(1.5),
-      new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> 0.90, () -> 0.0, false).withTimeout(2.5),
+      new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> -1, () -> -0.3, () -> 0.0, false).withTimeout(1.5),
+      new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> -1, () -> 0.90, () -> 0.0, false).withTimeout(2.5),
       new SullyCmd(pneumaticsSubsystem));
 
     //Create parallel commands to perform manipulator stow while driving
@@ -180,6 +190,7 @@ public class RobotContainer {
       () -> (MathMethods.speedMax(AutoConstants.kAutoBalanceSpeedFactor*Math.sin(Math.toRadians(robotDrive.getPitch())), AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond, AutoConstants.kAutoBalanceDeadbandDegrees)),
       () -> (-MathMethods.speedMax(AutoConstants.kAutoBalanceSpeedFactor*Math.sin(Math.toRadians(robotDrive.getRoll())), AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond, AutoConstants.kAutoBalanceDeadbandDegrees)),
       () -> (0.0), () -> false);
+
 
 
 
@@ -214,27 +225,29 @@ public class RobotContainer {
         () -> (-MathMethods.speedMax(AutoConstants.kAutoBalanceSpeedFactor*Math.sin(Math.toRadians(robotDrive.getRoll())), AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond, AutoConstants.kAutoBalanceDeadbandDegrees)),
         () -> (0.0), () -> false));
 
+    
+
     //Unfinished 15 pt autonomous - Score preloaded cargo, drive out of commmunity boundary to pick up cargo, drive back to cube node, score new cargo
     SequentialCommandGroup doubleScoringAuto = new SequentialCommandGroup(
         new SullyCmd(pneumaticsSubsystem), new WaitCommand(1.0), 
-        new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> -0.90, () -> 0.0, false).withTimeout(2),
-        new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> -1, () -> -0.3, () -> 0.0, false).withTimeout(0.2),
+        new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> -1, () -> -0.90, () -> 0.0, false).withTimeout(2),
+        new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> -0.3, () -> 0.0, false).withTimeout(0.2),
         new TelescopeCmd(robotLift, () -> 0.0, () -> 1).withTimeout(0.1),
         new ClawCmd(robotManipulator, () -> ManipulatorConstants.kClawMotorSpeed, ()-> 1).withTimeout(0.5),
         new ClawCmd(robotManipulator, () -> ManipulatorConstants.kClawMotorSpeed, ()-> -1).withTimeout(0.5), 
-        toCargo2AndRetract,
-        new SullyCmd(pneumaticsSubsystem).withTimeout(0.75),
+        toCargo2AndRetract
+        /*new SullyCmd(pneumaticsSubsystem).withTimeout(0.75),
         new LiftIntakeCmd(robotLift), 
         new IntakeCmd(robotManipulator, ()-> ManipulatorConstants.kIntakeMotorSpeed, 1).withTimeout(0.5),
         new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> -0.90, () -> 0.0, false).withTimeout(1.5),//Arm Up
         new SullyCmd(pneumaticsSubsystem),
-        new ParallelCommandGroup(
+        //new ParallelCommandGroup(
           /*new SequentialCommandGroup(new WaitCommand(0.6), new AprilReorientation(limelightSubsystem, robotDrive)),*/ 
-          new ParallelRaceGroup(blueTopCargoReturnCmd, new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> -0.90, () -> 0.0, false))),
+        /*new ParallelRaceGroup(blueTopCargoReturnCmd, new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> 1, () -> -0.90, () -> 0.0, false)),
         new TelescopeWithLiftCmd(robotLift, () -> 1.00, () -> -1, () -> -0.3, () -> 0.0, false).withTimeout(2.0),
         new TelescopeCmd(robotLift, () -> 0.0, () -> 1).withTimeout(0.1),
         new ClawCmd(robotManipulator, () -> ManipulatorConstants.kClawMotorSpeed, ()-> 1).withTimeout(0.5),
-        new ClawCmd(robotManipulator, () -> ManipulatorConstants.kClawMotorSpeed, ()-> -1).withTimeout(0.5));
+        new ClawCmd(robotManipulator, () -> ManipulatorConstants.kClawMotorSpeed, ()-> -1).withTimeout(0.5)*/);
 
     
     
@@ -316,10 +329,10 @@ public class RobotContainer {
       () -> ManipulatorConstants.kIntakeMotorSpeed, 1));
     new JoystickButton(operatorController, Buttons.B).whileTrue(new IntakeCmd(robotManipulator, 
       () -> ManipulatorConstants.kIntakeMotorSpeed, -1));
-    new JoystickButton(operatorController, Buttons.Y).whileTrue(new ClawCmd(robotManipulator, 
+    new JoystickButton(operatorController, Buttons.A).whileTrue(new ClawCmd(robotManipulator, 
       () -> ManipulatorConstants.kClawMotorSpeed, () -> 1));
     
-    new JoystickButton(operatorController, Buttons.A).whileTrue(new ClawCmd(robotManipulator, 
+    new JoystickButton(operatorController, Buttons.Y).whileTrue(new ClawCmd(robotManipulator, 
       () -> ManipulatorConstants.kClawMotorSpeed, () -> -1));
 
     new JoystickButton(driverController, Buttons.LB).whileTrue(new RumbleCmd(operatorController, 1, 1.00));
@@ -357,6 +370,10 @@ public class RobotContainer {
 
     //Zero Heading
     new JoystickButton(driverController, Buttons.X).toggleOnTrue(new AllForNaught(robotDrive));
+
+    new JoystickButton(driverController, Buttons.Y).whileTrue(new SwerveControllerCmd(robotDrive, () -> (0.0), () -> (0.0), 
+      () -> (-MathMethods.speedMax(0.02*limelightSubsystem.getTargetOffsetX(), 0.2, 0.003)),
+      () -> false));
 
     //Reset lift bounds in case of error
     //new JoystickButton(driverController, Buttons.B).toggleOnTrue(new ResetLiftBoundsCmd(robotLift));
