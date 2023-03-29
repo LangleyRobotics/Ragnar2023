@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.lightingSubsystem;
 
 
-public class TransPrideCmd extends CommandBase{
+public class BiPrideCmd extends CommandBase{
     private final lightingSubsystem lightingSubsystem;
 
 
-    public TransPrideCmd(lightingSubsystem lightingSubsystem) {
+    public BiPrideCmd(lightingSubsystem lightingSubsystem) {
         this.lightingSubsystem = lightingSubsystem;
         addRequirements(lightingSubsystem);
     }
@@ -20,7 +20,7 @@ public class TransPrideCmd extends CommandBase{
 
     @Override
     public void execute() {
-        lightingSubsystem.transPride();
+        lightingSubsystem.biPride();
     }
      
     @Override

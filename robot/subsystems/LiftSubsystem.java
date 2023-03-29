@@ -29,8 +29,8 @@ public class LiftSubsystem extends SubsystemBase{
     private final ArmFeedforward liftForwardController = new ArmFeedforward(LiftConstants.kS_Lift, LiftConstants.kG_Lift, LiftConstants.kV_Lift, LiftConstants.kA_Lift);
     private final PIDController liftPIDController = new PIDController(LiftConstants.kP_Lift, LiftConstants.kI_Lift, LiftConstants.kD_Lift);
     private final DigitalInput limSwInput = new DigitalInput(0);
-    private final DigitalInput limSwDDDown = new DigitalInput(2);
-    private final DigitalInput limSwDDUp = new DigitalInput(4); //Channel not yet verified
+    //private final DigitalInput limSwDDDown = new DigitalInput(2);
+    //private final DigitalInput limSwDDUp = new DigitalInput(4); //Channel not yet verified
     double absEncoderRaw = 0;
 
     
@@ -44,8 +44,8 @@ public class LiftSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Telescoping Motor Encoder Position", getTeleRelEnc());
         SmartDashboard.putNumber("Telescope Motor Current", telescopeMotor.getOutputCurrent());
         SmartDashboard.putBoolean("Limit Switch State", limSwInput.get());
-        SmartDashboard.putBoolean("Limit Switch Drop Down Down", limSwDDDown.get());
-        SmartDashboard.putBoolean("Limit Switch Drop Down Up", limSwDDUp.get());
+        //SmartDashboard.putBoolean("Limit Switch Drop Down Down", limSwDDDown.get());
+        //SmartDashboard.putBoolean("Limit Switch Drop Down Up", limSwDDUp.get());
 
 
     } 
@@ -138,14 +138,14 @@ public class LiftSubsystem extends SubsystemBase{
         return limSwInput.get();
     }
     
-    public Boolean getLimitSwitchDDDown() {
+    /*public Boolean getLimitSwitchDDDown() {
         return limSwDDDown.get();
     }
 
         
     public Boolean getLimitSwitchDDUp() {
         return limSwDDUp.get();
-    }
+    }*/
 
     public void stopTelescopeMotor() {
         telescopeMotor.set(0);

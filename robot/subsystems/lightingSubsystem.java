@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import java.util.HashMap;
+//import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -15,7 +15,7 @@ public class lightingSubsystem extends SubsystemBase{
     private final AddressableLEDBuffer seizLedBuffer = new AddressableLEDBuffer(LEDConstants.kAddressableLightsLength);
 
 
-    private HashMap<Character, int[]> lettersToLights = new HashMap<Character, int[]>();
+    //private HashMap<Character, int[]> lettersToLights = new HashMap<Character, int[]>();
 
 
 
@@ -71,6 +71,23 @@ public class lightingSubsystem extends SubsystemBase{
     }
     for (var i = 0; i < whiteArray.length; i++) {
         seizLedBuffer.setHSV(whiteArray[i], 0, 0, 200);
+    }
+
+    seizureEnducer.setData(seizLedBuffer);
+  }
+
+  public void biPride() {
+    int[] blueArray = {0,1,2,3,4,5,15,16,17,18,19,20};
+    int[] pinkArray = {9,10,11,12,13,14,24,25,26,27,28,29};
+    int[] purpleArray = {6,7,8,21,22,23};
+    for (var i = 0; i < blueArray.length; i++) {
+        seizLedBuffer.setHSV(blueArray[i], 100, 255, 165);
+    }
+    for (var i = 0; i < pinkArray.length; i++) {
+        seizLedBuffer.setHSV(pinkArray[i], 168, 220, 120);
+    }
+    for (var i = 0; i < purpleArray.length; i++) {
+        seizLedBuffer.setRGB(purpleArray[i], 75,0, 120);
     }
 
     seizureEnducer.setData(seizLedBuffer);

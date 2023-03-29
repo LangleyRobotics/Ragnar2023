@@ -5,11 +5,13 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 import frc.robot.Constants;
+import frc.robot.MathMethods;
 
 public class SwerveControllerCmd extends CommandBase {
 
@@ -32,9 +34,27 @@ public class SwerveControllerCmd extends CommandBase {
         addRequirements(swerveSubsystem);
     }
 
+    public SwerveControllerCmd(DriveSubsystem swerveSubsystem, boolean isAutoBal) {
+        this.swerveSubsystem = swerveSubsystem;
+        this.xSpdFunction = () -> (MathMethods.speedMax(AutoConstants.kAutoBalanceSpeedFactor*Math.sin(Math.toRadians(swerveSubsystem.getPitch())),
+            AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond, AutoConstants.kAutoBalanceDeadbandDegrees, AutoConstants.kAutoBalanceMinSpeed));
+        
+        this.ySpdFunction = () -> (-MathMethods.speedMax(AutoConstants.kAutoBalanceSpeedFactor*Math.sin(Math.toRadians(swerveSubsystem.getRoll())), 
+            AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond, AutoConstants.kAutoBalanceDeadbandDegrees, AutoConstants.kAutoBalanceMinSpeed));
+            
+        this.turningSpdFunction = () -> (0.0);
+        this.fieldOrientedFunction = () -> false;
+        
+        this.xLimiter = new SlewRateLimiter(Constants.kMaxAccelerationMetersPerSecondSquared);
+        this.yLimiter = new SlewRateLimiter(Constants.kMaxAccelerationMetersPerSecondSquared);
+        this.turningLimiter = new SlewRateLimiter(Constants.kMaxAngularAccelerationRadiansPerSecondSquared);
+        addRequirements(swerveSubsystem);
+    }
+
     @Override
     public void initialize() {
     }
+
 
     @Override
     public void execute() {

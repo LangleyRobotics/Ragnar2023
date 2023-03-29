@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -8,14 +8,16 @@ import frc.robot.subsystems.LiftSubsystem;
 
 
 
-public class LiftIntakeCmd extends CommandBase{
+public class LiftAutoCmd extends CommandBase{
     
     private final LiftSubsystem liftSubsystem;
+    private final double setPoint;
     private Boolean isFinished;
 
 
-    public LiftIntakeCmd(LiftSubsystem liftSubsystem) {
+    public LiftAutoCmd(LiftSubsystem liftSubsystem, double setPoint) {
         this.liftSubsystem = liftSubsystem;
+        this.setPoint = setPoint;
         //this.isFinished = isFinished;
         addRequirements(liftSubsystem);
     }
@@ -28,23 +30,19 @@ public class LiftIntakeCmd extends CommandBase{
 
     @Override
     public void execute() {
-        TrapezoidProfile liftIntakeProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 10),
-                                                new TrapezoidProfile.State(5, 0),
-                                                new TrapezoidProfile.State(0, 0));
-
         double liftPos = liftSubsystem.getLiftAbsEncoder();
-        double distToIntake = LiftConstants.kIntakeLiftPosition - liftPos;
-        if (distToIntake!=0 && Math.abs(distToIntake) < 0.05) {
-            liftSubsystem.setLiftMotor((-MathMethods.signDouble(distToIntake)*0.25));
+        double distToSetPoint = setPoint - liftPos;
+        if (distToSetPoint!=0 && Math.abs(distToSetPoint) < 0.05) {
+            liftSubsystem.setLiftMotor((-MathMethods.signDouble(distToSetPoint)*0.35));
         }
-        if (Math.abs(distToIntake)>=0.05 && Math.abs(distToIntake)<=0.10) {
-            liftSubsystem.setLiftMotor((-5*distToIntake));
+        if (Math.abs(distToSetPoint)>=0.05 && Math.abs(distToSetPoint)<=0.10) {
+            liftSubsystem.setLiftMotor((-8*distToSetPoint));
         }
-        if (Math.abs(distToIntake) > 0.10) {
-            liftSubsystem.setLiftMotor(-MathMethods.signDouble(distToIntake)*0.5);
+        if (Math.abs(distToSetPoint) > 0.10) {
+            liftSubsystem.setLiftMotor(-MathMethods.signDouble(distToSetPoint)*0.80);
         }
 
-        if (Math.abs(distToIntake) < 0.0008) {
+        if (Math.abs(distToSetPoint) < 0.004) {
             liftSubsystem.stopLiftMotor();
             isFinished = true;
         }

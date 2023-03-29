@@ -131,7 +131,7 @@ public final class Constants {
     public static final double kMinLiftPosition = 0.765 + kLiftOffset;
     public static final double kIntakeLiftPosition = 0.81 + kLiftOffset;
     public static final double kLiftEncoderBreakpoint = 0.5 + kLiftOffset;
-    public static final double kConeShelfSetPoint = 0.96 + kLiftOffset;
+    public static final double kConeShelfSetPoint = 0.962 + kLiftOffset;
     public static final double kMaxLiftPosition = 1.025 + kLiftOffset;
 
     //DO NOT USE THESE CONSTANTS - TEST AND CALIBRATE CORRECT POSITIONS
@@ -143,7 +143,7 @@ public final class Constants {
     public static final double kMaxLiftPositionDDUpInside = 0.775 + kLiftOffset;
     public static final double kMinLiftPositionDDUpInside = 0.765 + kLiftOffset;
 
-    public static final double kTelescopeSpeed = 1.00;
+    public static final double kTelescopeSpeed = 1.0;
 
     public static final double kliftSetPointSpeedConversionFactorFar = 0.05;
     public static final double kliftSetPointSpeedConversionFactorClose = 0.01;
@@ -197,7 +197,7 @@ public final class Constants {
   public static final class ManipulatorConstants {
     public static final int kClawMotor = 11;
     public static final int kIntakeMotor = 14;
-    public static final double kClawMotorSpeed = 0.4; //value from 0-1
+    public static final double kClawMotorSpeed = 1.0; //value from 0-1
     public static final double kIntakeMotorSpeed = 0.69; //value from 0-1
   }
 
@@ -242,6 +242,7 @@ public final class Constants {
     public static final double kAutoBalanceSpeedFactor = 0.5;
     public static final double kAutoBalanceMaxSpeedMetersPerSecond = 0.69;
     public static final double kAutoBalanceDeadbandDegrees = 2;
+    public static final double kAutoBalanceMinSpeed = 0.1;
     public static final double kFieldEndXCoordinate = 16.5;
 
     public static final double kLameSpeedCap = 1.0;

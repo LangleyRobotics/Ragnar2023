@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Pose2d;
 
 
 public class LimelightSubsystem extends SubsystemBase{
@@ -77,6 +78,8 @@ public class LimelightSubsystem extends SubsystemBase{
         }
 
     }
+    
+    
 
     public double getTargetOffsetX()
     {
@@ -88,7 +91,7 @@ public class LimelightSubsystem extends SubsystemBase{
       return ty.getDouble(0.0);
     }
   
-    public double[] get_LL_botpose()
+    public static double[] get_LL_botpose()
     {
       return NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
     }
