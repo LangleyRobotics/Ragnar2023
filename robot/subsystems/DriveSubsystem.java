@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,6 +15,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGenerationException;
+
+import java.util.List;
 
 import com.kauailabs.navx.frc.AHRS;
 import frc.robot.Constants;
@@ -30,6 +36,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MathMethods;
+import frc.robot.Trajectories;
 
 
 public class DriveSubsystem extends SubsystemBase {
@@ -94,7 +101,7 @@ public class DriveSubsystem extends SubsystemBase {
             rearLeft.getPosition(),
             rearRight.getPosition()
           },
-          new Pose2d(2.0, 3.0, new Rotation2d()));
+          new Pose2d(0.0, 0.0, new Rotation2d()));
   
 
   /** Creates a new DriveSubsystem. */
@@ -120,6 +127,13 @@ public class DriveSubsystem extends SubsystemBase {
         rearRight.getPosition()
       }, aprilPose2d);
   }
+
+  public Trajectory OTFGen(List<Translation2d> transList, Pose2d endPose, TrajectoryConfig config) {
+    System.out.println(getPose().getX());
+    System.out.println(getPose().getY());
+    System.out.println(getPose().getRotation().getDegrees());
+    return TrajectoryGenerator.generateTrajectory(getPose(), transList, endPose, config);
+  }
   
   //Command Factory In Subsystem Test
   public SequentialCommandGroup AutoCommandFactory(Trajectory path) {
@@ -142,6 +156,34 @@ public class DriveSubsystem extends SubsystemBase {
       SequentialCommandGroup SequentialCommandOutput = new SequentialCommandGroup(new InstantCommand(() -> resetOdometry(path.getInitialPose())),
                                                                                     swerveControllerCommand,
                                                                                     new InstantCommand(() -> stopModules()));
+      System.out.println(path.getInitialPose());
+      return SequentialCommandOutput;
+  }
+
+  public SequentialCommandGroup AutoCommandFactory(Trajectory path, boolean blah) {
+    var thetaController =
+    new ProfiledPIDController(
+      AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+      thetaController.enableContinuousInput(-Math.PI, Math.PI);
+      
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+      TrajectoryGenerator.generateTrajectory(getPose(), 
+        List.of(new Translation2d(5.3, 4.75)), 
+        new Pose2d(2.43, 4.75, new Rotation2d(Math.toRadians(181))), 
+        Trajectories.reverseLameConfig),
+      this::getPose, // Functional interface to feed supplier
+      DriveConstants.kDriveKinematics,
+      // Position controllers
+      new PIDController(AutoConstants.kPXController, 0, 0),
+      new PIDController(AutoConstants.kPYController, 0, 0),
+      thetaController,
+      this::setModuleStates,
+      this);
+
+      SequentialCommandGroup SequentialCommandOutput = new SequentialCommandGroup(new InstantCommand(() -> resetOdometry(getPose())),
+                                                                                  swerveControllerCommand,
+                                                                                  new InstantCommand(() -> stopModules()));
+      System.out.println(path.getInitialPose());
       return SequentialCommandOutput;
   }
 

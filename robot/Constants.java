@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -23,6 +25,9 @@ public final class Constants {
   public static final double kMaxAccelerationMetersPerSecondSquared = 2;
   public static final double kMaxAngularSpeedRadiansPerSecond = MathMethods.Tau;
   public static final double kMaxAngularAccelerationRadiansPerSecondSquared = MathMethods.Tau;
+  public static final CustomHolonomicDrive holonomicDrive = new CustomHolonomicDrive(new PIDController(0.5, 0.0, 0.0),
+                                                              new PIDController(
+                                                                0.04, 0, 0));
 
   public static final class LEDConstants {
     public static final int kAddressableLightsID = 0;
@@ -127,12 +132,15 @@ public final class Constants {
     public static final int kTelescopeMotor = 13;
     public static final double kLiftReduction = 1/5;
 
-    public static final double kLiftOffset = -0.165;
-    public static final double kMinLiftPosition = 0.765 + kLiftOffset;
-    public static final double kIntakeLiftPosition = 0.81 + kLiftOffset;
-    public static final double kLiftEncoderBreakpoint = 0.5 + kLiftOffset;
-    public static final double kConeShelfSetPoint = 0.962 + kLiftOffset;
-    public static final double kMaxLiftPosition = 1.025 + kLiftOffset;
+    public static final double kTimmyHigh = 1.95;
+    public static final double kTimmyMid = 1.3;
+    public static final double kLiftOffset =  0.254;
+    public static final double kMinLiftPosition = 0.765;
+    public static final double kIntakeLiftPosition = 0.805;
+    public static final double kLiftEncoderBreakpoint = 0.5;
+    public static final double kConeShelfSetPoint = 0.962;
+    public static final double kMidTimmy = 0.935;
+    public static final double kMaxLiftPosition = 1.025;
 
     //DO NOT USE THESE CONSTANTS - TEST AND CALIBRATE CORRECT POSITIONS
     public static final double kMaxLiftPositionDDInbetween = 0.765 + kLiftOffset;
@@ -241,8 +249,8 @@ public final class Constants {
     public static final double kAutoMaxAccelerationMetersPerSecondSquared = 2;
     public static final double kAutoBalanceSpeedFactor = 0.5;
     public static final double kAutoBalanceMaxSpeedMetersPerSecond = 0.69;
-    public static final double kAutoBalanceDeadbandDegrees = 2;
-    public static final double kAutoBalanceMinSpeed = 0.1;
+    public static final double kAutoBalanceDeadbandDegrees = 3;
+    public static final double kAutoBalanceMinSpeed = 0.13;
     public static final double kFieldEndXCoordinate = 16.5;
 
     public static final double kLameSpeedCap = 1.0;

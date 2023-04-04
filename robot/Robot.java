@@ -4,9 +4,15 @@
 
 package frc.robot;
 
+import java.nio.channels.Pipe;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.PipelineSwitch;
+import frc.robot.subsystems.LimelightSubsystem;
 
 
 
@@ -15,10 +21,12 @@ public class Robot extends TimedRobot {
   private Command lightsCommand;
 
   private RobotContainer m_robotContainer;
+  private LimelightSubsystem m_limelightSubsystem;
 
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
+    m_limelightSubsystem = new LimelightSubsystem();
 
   }
 
@@ -69,6 +77,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    PipelineSwitch coneSwitch = new PipelineSwitch(m_limelightSubsystem, 1);
+    coneSwitch.schedule();
   }
 
   /** This function is called periodically during operator control. */

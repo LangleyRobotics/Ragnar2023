@@ -37,10 +37,10 @@ public class SwerveControllerCmd extends CommandBase {
     public SwerveControllerCmd(DriveSubsystem swerveSubsystem, boolean isAutoBal) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = () -> (MathMethods.speedMax(AutoConstants.kAutoBalanceSpeedFactor*Math.sin(Math.toRadians(swerveSubsystem.getPitch())),
-            AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond, AutoConstants.kAutoBalanceDeadbandDegrees, AutoConstants.kAutoBalanceMinSpeed));
+            AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond, AutoConstants.kAutoBalanceDeadbandDegrees, AutoConstants.kAutoBalanceMinSpeed, () -> swerveSubsystem.getPitch()));
         
         this.ySpdFunction = () -> (-MathMethods.speedMax(AutoConstants.kAutoBalanceSpeedFactor*Math.sin(Math.toRadians(swerveSubsystem.getRoll())), 
-            AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond, AutoConstants.kAutoBalanceDeadbandDegrees, AutoConstants.kAutoBalanceMinSpeed));
+            AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond, AutoConstants.kAutoBalanceDeadbandDegrees, AutoConstants.kAutoBalanceMinSpeed, () -> swerveSubsystem.getRoll()));
             
         this.turningSpdFunction = () -> (0.0);
         this.fieldOrientedFunction = () -> false;

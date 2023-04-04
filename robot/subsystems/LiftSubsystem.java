@@ -38,7 +38,7 @@ public class LiftSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Lift Encoder Position No Offset", getLiftAbsEncoder());
-        SmartDashboard.putNumber("Lift Encoder Position Offset", getLiftAbsEncoder() - LiftConstants.kLiftOffset);
+        SmartDashboard.putNumber("Lift Encoder Position Offset", getLiftAbsEncoder());
         SmartDashboard.putNumber("Left Lift Motor Velocity", liftMotorLeft.get());
         SmartDashboard.putNumber("Right Lift Motor Velocity", liftMotorRight.get());
         SmartDashboard.putNumber("Telescoping Motor Encoder Position", getTeleRelEnc());
@@ -171,7 +171,7 @@ public class LiftSubsystem extends SubsystemBase{
     public double getLiftAbsEncoder() {
         //liftAbsEncoder.setDistancePerRotation(0.15);
         liftAbsEncoder.setPositionOffset(0);
-        absEncoderRaw = liftAbsEncoder.getAbsolutePosition();
+        absEncoderRaw = liftAbsEncoder.getAbsolutePosition()+LiftConstants.kLiftOffset;
         if (absEncoderRaw < LiftConstants.kLiftEncoderBreakpoint) {
             return (absEncoderRaw+1);
         } else {

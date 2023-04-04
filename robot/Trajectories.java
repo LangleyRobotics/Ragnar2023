@@ -27,8 +27,8 @@ public class Trajectories {
 
     public static final TrajectoryConfig lameConfig =
         new TrajectoryConfig(
-                2.5,
-                2)
+                1,
+                1)
             .setKinematics(DriveConstants.kDriveKinematics);
 
     public static final TrajectoryConfig reverseLameConfig = lameConfig.setReversed(true);
@@ -120,20 +120,22 @@ public class Trajectories {
         TrajectoryGenerator.generateTrajectory(
             new Pose2d(1.7, 4.45, new Rotation2d(Math.toRadians(180.0))), 
             List.of(new Translation2d(4.2, 4.8)),
-            new Pose2d(5.0, 4.6, new Rotation2d(Math.toRadians(0))), 
+            new Pose2d(5.4, 4.6, new Rotation2d(Math.toRadians(-3.0))), 
             reverseConfig);
+
+    public static final Pose2d blueDoubleScoreResetPose = new Pose2d(5.3, 4.6, new Rotation2d(Math.toRadians(180.0)));
 
 
     //Theoretically Impossible Without negligible air resistance and/or friction  /j
     //Double cargo autonomous - drive back to cube node from cargo pickup
     public static final Trajectory blueTopReturnCargo = 
         TrajectoryGenerator.generateTrajectory(
-            new Pose2d(6.7,4.6, new Rotation2d(0)), 
-            List.of(new Translation2d(4.2, 4.8)), 
-            new Pose2d(1.7, 4.45, new Rotation2d(-Math.PI)), 
+            new Pose2d(5.3,4.6, new Rotation2d(Math.PI)), 
+            List.of(), 
+            new Pose2d(2.53, 4.6, new Rotation2d(Math.PI)), 
             reverseConfig);
 
-     public static final Trajectory redTopTo2Cargo = 
+     public static final Trajectory redTopReturnCargo = 
         TrajectoryGenerator.generateTrajectory(
             new Pose2d(1.7, 4.45, new Rotation2d(Math.PI)), 
             List.of(new Translation2d(4.2, 4.8)),
@@ -179,5 +181,21 @@ public class Trajectories {
             List.of(), 
             new Pose2d(0.55, 0, new Rotation2d(Math.PI)), 
             reverseConfig);
+
+
+    public static final Trajectory testDouble = 
+        TrajectoryGenerator.generateTrajectory(new Pose2d(6.5,4.5, 
+            new Rotation2d(Math.toRadians(-22))),
+            List.of(new Translation2d(5.3, 4.6)), 
+            new Pose2d(2.53, 4.5, new Rotation2d(Math.toRadians(181))), 
+            reverseConfig);
+
+
+    public static final Trajectory dynamicTrajectoryTestP1 = 
+    TrajectoryGenerator.generateTrajectory(new Pose2d(1.0, -1.0, 
+        new Rotation2d(Math.toRadians(180.0))),
+        List.of(), 
+        new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180.0))), 
+        config);
 
 }

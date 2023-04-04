@@ -4,7 +4,6 @@ package frc.robot.commands.AutoCommands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.MathMethods;
-import frc.robot.Constants.LiftConstants;
 
 import frc.robot.subsystems.LiftSubsystem;
 

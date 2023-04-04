@@ -19,6 +19,16 @@ public class LimelightSubsystem extends SubsystemBase{
     private NetworkTableEntry ta;
     private NetworkTableEntry camMode;
     private NetworkTableEntry ledMode;
+    private NetworkTableEntry pipeline;
+
+    private NetworkTable tableLow;
+    private NetworkTableEntry txLow;
+    private NetworkTableEntry tyLow;
+    private NetworkTableEntry tvLow;
+    private NetworkTableEntry taLow;
+    private NetworkTableEntry camModeLow;
+    private NetworkTableEntry ledModeLow;
+    private NetworkTableEntry pipelineLow;
   
 
     public static LimelightSubsystem getInstance()
@@ -34,15 +44,25 @@ public class LimelightSubsystem extends SubsystemBase{
      */
     public LimelightSubsystem()
     {
-      CameraServer.startAutomaticCapture();
-      table = NetworkTableInstance.getDefault().getTable("limelight");
+      //CameraServer.startAutomaticCapture();
+      table = NetworkTableInstance.getDefault().getTable("limelight-high");
       tx = table.getEntry("tx"); 
       ty = table.getEntry("ty"); 
       tv = table.getEntry("tv"); 
       ta = table.getEntry("ta");
-
       ledMode = table.getEntry("ledMode"); // limelight's LED state (0-3).
       camMode = table.getEntry("camMode"); // limelight's operation mode (0-1).
+      pipeline = table.getEntry("pipeline");
+
+      //low limelight, rename in limelight online interface
+      tableLow = NetworkTableInstance.getDefault().getTable("limelight-low");
+      txLow = tableLow.getEntry("tx"); 
+      tyLow = tableLow.getEntry("ty"); 
+      tvLow = tableLow.getEntry("tv"); 
+      taLow = tableLow.getEntry("ta");
+      ledModeLow = tableLow.getEntry("ledMode"); // limelight's LED state (0-3).
+      camModeLow = tableLow.getEntry("camMode"); // limelight's operation mode (0-1).
+      pipelineLow = tableLow.getEntry("pipeline");
     }
     
     @Override
@@ -52,7 +72,13 @@ public class LimelightSubsystem extends SubsystemBase{
         double y = getTargetOffsetY();
         double area = getTargetArea();
         boolean targetInView = targetInView();
-        double[] LL_botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+
+        double xLow = getTargetOffsetXLow();
+        double yLow = getTargetOffsetYLow();
+        double areaLow = getTargetAreaLow();
+        boolean targetInViewLow = targetInViewLow();
+
+        double[] LL_botpose = NetworkTableInstance.getDefault().getTable("limeligh-low").getEntry("botpose").getDoubleArray(new double[6]);
         //post to smart dashboard periodically
         SmartDashboard.putNumber("LimelightX", x);
         SmartDashboard.putNumber("LimelightY", y);
@@ -60,6 +86,12 @@ public class LimelightSubsystem extends SubsystemBase{
         SmartDashboard.putBoolean("Limelight Target in view", targetInView);
         SmartDashboard.putBoolean("Driver Mode", isDriverMode());
         SmartDashboard.putBoolean("Vision Mode ", isVisionMode());
+
+
+        SmartDashboard.putNumber("LimelightX Low", xLow);
+        SmartDashboard.putNumber("LimelightY Low", yLow);
+        SmartDashboard.putNumber("LimelightArea Low", areaLow);
+        SmartDashboard.putBoolean("Limelight Target in view Low", targetInViewLow);
         //put botpose values in smart dashboard
         try {
           SmartDashboard.putNumber(" Translation BotPose X", LL_botpose[0]);
@@ -90,11 +122,6 @@ public class LimelightSubsystem extends SubsystemBase{
     {
       return ty.getDouble(0.0);
     }
-  
-    public static double[] get_LL_botpose()
-    {
-      return NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
-    }
 
     public boolean targetInView()
     {
@@ -113,7 +140,14 @@ public class LimelightSubsystem extends SubsystemBase{
     {
       ledMode.setNumber(mode);
     }
-  
+    
+    public void setPipeline(int id) {
+      pipeline.setNumber(id);
+    }
+
+    public long getPipeline() {
+      return pipeline.getInteger(0);
+    }
 
     public void turnOnLED()
     {
@@ -171,4 +205,44 @@ public class LimelightSubsystem extends SubsystemBase{
       {
         this.blinkLED();
       }
-    }}
+
+    }
+
+    public double getTargetOffsetXLow()
+    {
+      return txLow.getDouble(0.0);
+    }
+  
+    public double getTargetOffsetYLow()
+    {
+      return tyLow.getDouble(0.0);
+    }
+
+    public boolean targetInViewLow()
+    {
+        if (tvLow.getNumber(0).intValue() == 1) {
+            return true;
+        }
+        return false;
+    }
+  
+    public double getTargetAreaLow()
+    {
+      return taLow.getDouble(0.0);
+    }
+  
+    private void setLEDModeLow(int mode)
+    {
+      ledModeLow.setNumber(mode);
+    }
+    
+    public void setPipelineLow(int id) {
+      pipelineLow.setNumber(id);
+    }
+
+    public static double[] get_LL_botpose()
+    {
+      return NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+    }
+  
+  }
