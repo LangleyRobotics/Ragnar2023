@@ -15,7 +15,6 @@ import frc.robot.Constants.DriveConstants;
 
 
 
-
 public class Trajectories {
     public static final TrajectoryConfig config =
         new TrajectoryConfig(
@@ -32,6 +31,12 @@ public class Trajectories {
             .setKinematics(DriveConstants.kDriveKinematics);
 
     public static final TrajectoryConfig reverseLameConfig = lameConfig.setReversed(true);
+
+    public static final TrajectoryConfig normalConfig =
+        new TrajectoryConfig(
+                AutoConstants.kAutoMaxSpeedMetersPerSecond,
+                AutoConstants.kAutoMaxAccelerationMetersPerSecondSquared)
+            .setKinematics(DriveConstants.kDriveKinematics);
 
 
     public static final Trajectory defaultTrajectory =
@@ -113,9 +118,7 @@ public class Trajectories {
 
 
 
-
-
-    //Double cargo autonomous - drive to cargo
+    //DOUBLE SCORE BLUE
     public static final Trajectory blueTopTo2Cargo = 
         TrajectoryGenerator.generateTrajectory(
             new Pose2d(1.7, 4.45, new Rotation2d(Math.toRadians(180.0))), 
@@ -123,34 +126,42 @@ public class Trajectories {
             new Pose2d(5.4, 4.6, new Rotation2d(Math.toRadians(-3.0))), 
             reverseConfig);
 
-    public static final Pose2d blueDoubleScoreResetPose = new Pose2d(5.3, 4.6, new Rotation2d(Math.toRadians(180.0)));
+    public static final Pose2d blueDoubleScoreResetPose = new Pose2d(5.3, 4.6, new Rotation2d(Math.PI));
 
-
-    //Theoretically Impossible Without negligible air resistance and/or friction  /j
-    //Double cargo autonomous - drive back to cube node from cargo pickup
     public static final Trajectory blueTopReturnCargo = 
         TrajectoryGenerator.generateTrajectory(
-            new Pose2d(5.3,4.6, new Rotation2d(Math.PI)), 
+            new Pose2d(5.3,4.6, new Rotation2d(Math.toRadians(180.0))), 
             List.of(), 
-            new Pose2d(2.53, 4.6, new Rotation2d(Math.PI)), 
+            new Pose2d(2.13, 4.6, new Rotation2d(Math.toRadians(181.0))), 
+            normalConfig);
+
+    
+
+    //DOUBLE SCORE RED
+    public static final Trajectory redTopTo2Cargo = 
+        TrajectoryGenerator.generateTrajectory(
+            new Pose2d(AutoConstants.kFieldEndXCoordinate - 1.7, 4.45, new Rotation2d(Math.toRadians(0.0))), 
+            List.of(new Translation2d(AutoConstants.kFieldEndXCoordinate - 4.2, 4.8)),
+            new Pose2d(AutoConstants.kFieldEndXCoordinate - 5.4, 4.6, new Rotation2d(Math.toRadians(-183.0))), 
             reverseConfig);
+
+    public static final Pose2d redDoubleScoreResetPose = new Pose2d(AutoConstants.kFieldEndXCoordinate - 5.3, 4.6, new Rotation2d(Math.toRadians(0.0)));
 
      public static final Trajectory redTopReturnCargo = 
         TrajectoryGenerator.generateTrajectory(
-            new Pose2d(1.7, 4.45, new Rotation2d(Math.PI)), 
-            List.of(new Translation2d(4.2, 4.8)),
-            new Pose2d(6.7, 4.6, new Rotation2d(0)), 
+            new Pose2d(AutoConstants.kFieldEndXCoordinate - 5.3,4.6, new Rotation2d(Math.PI)), 
+            List.of(), 
+            new Pose2d(AutoConstants.kFieldEndXCoordinate - 2.53, 4.6, new Rotation2d(Math.PI)), 
             reverseConfig);
     
 
-    //Backup Auton
+    //SINGLE SCORE BACKUP
     public static final Trajectory backAutoRedRight = 
         TrajectoryGenerator.generateTrajectory(
             new Pose2d(AutoConstants.kFieldEndXCoordinate - 1.7, 4.45, new Rotation2d(0)), 
             List.of(), 
             new Pose2d(AutoConstants.kFieldEndXCoordinate - 5.7,4.45, new Rotation2d(0)), 
             reverseConfig);
-    
     
     public static final Trajectory backAutoBlueLeft = 
         TrajectoryGenerator.generateTrajectory(
@@ -175,14 +186,7 @@ public class Trajectories {
                 reverseConfig);
 
 
-    public static final Trajectory backToBalTest = 
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(1,0, new Rotation2d(Math.PI)), 
-            List.of(), 
-            new Pose2d(0.55, 0, new Rotation2d(Math.PI)), 
-            reverseConfig);
-
-
+    //STATIC Blue Double Score
     public static final Trajectory testDouble = 
         TrajectoryGenerator.generateTrajectory(new Pose2d(6.5,4.5, 
             new Rotation2d(Math.toRadians(-22))),
@@ -191,6 +195,7 @@ public class Trajectories {
             reverseConfig);
 
 
+    //DYNAMIC TRAJECTORY TESTING
     public static final Trajectory dynamicTrajectoryTestP1 = 
     TrajectoryGenerator.generateTrajectory(new Pose2d(1.0, -1.0, 
         new Rotation2d(Math.toRadians(180.0))),

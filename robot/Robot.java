@@ -78,8 +78,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    PipelineSwitch coneSwitch = new PipelineSwitch(m_limelightSubsystem, 1);
-    coneSwitch.schedule();
+    //PipelineSwitch coneSwitch = new PipelineSwitch(m_limelightSubsystem, 1);
+    //coneSwitch.schedule();
   }
 
   /** This function is called periodically during operator control. */

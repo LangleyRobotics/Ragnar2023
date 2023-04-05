@@ -4,9 +4,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-//import com.pathplanner.lib.*;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.CustomHolonomicDrive;
 
@@ -20,14 +18,10 @@ public class DriveToPointCmd extends CommandBase {
     Supplier<Double> zRotation;
 
     public DriveToPointCmd(DriveSubsystem swerveSubsystem, Supplier<Pose2d> targetPoseSupplier,
-      CustomHolonomicDrive HoloDrive, double timerSeconds, Supplier<Double> xSpeed, Supplier<Double> ySpeed,
-      Supplier<Double> zRotation) {
+      CustomHolonomicDrive HoloDrive) {
         m_swerveSubsystem = swerveSubsystem;
         m_targetPoseSupplier = targetPoseSupplier;
         m_HoloDrive = HoloDrive;
-        this.xSpeed = xSpeed;
-        this.ySpeed = ySpeed;
-        this.zRotation = zRotation;
 
         addRequirements(swerveSubsystem);
       }
@@ -35,8 +29,6 @@ public class DriveToPointCmd extends CommandBase {
 
     @Override
     public void initialize() {
-
-        //Pose2d m_targetPose = m_targetPoseSupplier.get();
 
     }
   
@@ -50,12 +42,16 @@ public class DriveToPointCmd extends CommandBase {
   
     @Override
     public void end(boolean interrupted) {
-          m_swerveSubsystem.stopModules();
+          //m_swerveSubsystem.stopModules();
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+      if (m_HoloDrive.targetPoseAchieved()) {
+        System.out.println("Itsa me mario");
+      }  
+      return m_HoloDrive.targetPoseAchieved();
+        //return false;
     }
 
     

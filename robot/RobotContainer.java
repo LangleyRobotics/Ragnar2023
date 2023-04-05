@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
-
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 
 //Constants Imports 
 import frc.robot.Constants.AutoConstants;
@@ -32,7 +33,6 @@ import frc.robot.Constants.DriveConstants;
 //import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.AllForNaught;
 //import frc.robot.Trajectories;
-import frc.robot.commands.AprilReorientation;
 //Command Imports
 import frc.robot.commands.ClawCmd;
 import frc.robot.commands.DriveToPointCmd;
@@ -43,10 +43,8 @@ import frc.robot.commands.RumbleCmd;
 import frc.robot.commands.SallyCmd;
 import frc.robot.commands.SullyCmd;
 //import frc.robot.commands.LiftAutoCmd;
-import frc.robot.commands.LiftIntakeCmd;
 import frc.robot.commands.LiftTriggerCmd;
 import frc.robot.commands.LiftTriggerCmdBounded;
-import frc.robot.commands.OTFTrajectoryCmd;
 //import frc.robot.commands.ResetLiftBoundsCmd;
 import frc.robot.commands.PipelineSwitch;
 import frc.robot.commands.SwerveControllerCmd;
@@ -119,6 +117,8 @@ public class RobotContainer {
   PathPlannerTrajectory blueTopScoreTrajectory = PathPlanner.loadPath("Scoring Path Blue Top", standardAutoPathConstraints);
   PathPlannerTrajectory chargeRightTrajectory = PathPlanner.loadPath("Charge Plate Run-up Right", standardAutoPathConstraints);
 */
+  PathPlannerTrajectory testForwardDrive = PathPlanner.loadPath("Test Forward Drive", standardAutoPathConstraints);
+  PathPlannerTrajectory blueTopReturnCargo = PathPlanner.loadPath("Blue Top Return Cargo", standardAutoPathConstraints);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -144,7 +144,6 @@ public class RobotContainer {
 
   
 
-    //lightingSubsystem.setDefaultCommand(new CargoSignalCmd(lightingSubsystem, pneumaticsSubsystem));
     lightingSubsystem.setDefaultCommand(new rainbowFromMid(lightingSubsystem));
 
 
@@ -167,14 +166,7 @@ public class RobotContainer {
       new TelescopeWithLiftCmd(robotLift, () -> LiftConstants.kTelescopeSpeed, () -> -1, () -> 0.90, () -> 0.0, false).withTimeout(2.5),
       new SullyCmd(pneumaticsSubsystem));
 
-    //Create parallel commands to perform manipulator stow while driving
-    ParallelCommandGroup driveBackRetractBlueLeft = new ParallelCommandGroup(RetractManipSeqCmdGrp.getSequentialCommandGroup(robotLift, pneumaticsSubsystem), robotDrive.AutoCommandFactory(Trajectories.blueTopToChargeLeft));
-    
-    ParallelCommandGroup toCargo2AndRetractBlueLeft = new ParallelCommandGroup(new SequentialCommandGroup(
-      new TelescopeWithLiftCmd(robotLift, () -> LiftConstants.kTelescopeSpeed, () -> -1, () -> 0.0, () -> 0.0, false).withTimeout(1.5),
-      new LiftAutoCmd(robotLift, LiftConstants.kIntakeLiftPosition)), robotDrive.AutoCommandFactory(Trajectories.blueTopTo2Cargo));
 
-    ParallelCommandGroup driveBackRetractRedRight = new ParallelCommandGroup(RetractManipSeqCmdGrp.getSequentialCommandGroup(robotLift, pneumaticsSubsystem), robotDrive.AutoCommandFactory(Trajectories.redTopToChargeRight));
 
 
     //21 pt autonomous - Score preloaded cargo, drive around the community boundary to the charge plate, balance on charge plate
@@ -202,8 +194,15 @@ public class RobotContainer {
       new SequentialCommandGroup(robotDrive.AutoCommandFactory(Trajectories.redTopToChargeLeft)))).andThen(robotDrive.AutoCommandFactory(Trajectories.blueTopToChargeUpRight), 
       new SwerveControllerCmd(robotDrive, true));
 
+
+
     
     
+
+    //BLUE DOUBLE SCORE AUTO
+    ParallelCommandGroup toCargo2AndRetractBlueLeft = new ParallelCommandGroup(new SequentialCommandGroup(
+      new TelescopeWithLiftCmd(robotLift, () -> LiftConstants.kTelescopeSpeed, () -> -1, () -> 0.0, () -> 0.0, false).withTimeout(1.5),
+      new LiftAutoCmd(robotLift, LiftConstants.kIntakeLiftPosition)), robotDrive.AutoCommandFactory(Trajectories.blueTopTo2Cargo));
 
     ParallelRaceGroup captureCargo = new ParallelRaceGroup(new SwerveControllerCmd(robotDrive, () -> (0.30), () -> (0.0), 
       () -> (-MathMethods.speedMax2(0.04*limelightSubsystem.getTargetOffsetX(), 0.2, 0.05)),
@@ -212,15 +211,21 @@ public class RobotContainer {
         () -> ManipulatorConstants.kIntakeMotorSpeed, -1),
       new TelescopeWithLiftCmd(robotLift, () -> LiftConstants.kTelescopeSpeed, () -> -1, () -> 0.0, () -> 0.0, false));
 
-    //SequentialCommandGroup prepareToPounceTest = new SequentialCommandGroup(new SullyCmd(pneumaticsSubsystem), new WaitCommand(1.0), prepareToPounce);
+    SequentialCommandGroup blueDoubleScoreAuto = new SequentialCommandGroup(new PipelineSwitch(limelightSubsystem, 0),
+      outtakeAutoSeqCmdGrp.getSequentialCommandGroup(robotLift, robotManipulator, pneumaticsSubsystem, LiftConstants.kTimmyHigh), 
+        toCargo2AndRetractBlueLeft,
+        captureCargo,
+        new ParallelCommandGroup(new SequentialCommandGroup(
+                                    new DriveToPointCmd(robotDrive, () -> (Trajectories.blueDoubleScoreResetPose), Constants.holonomicDrive), 
+                                    robotDrive.AutoCommandFactory(Trajectories.blueTopReturnCargo)), 
+          new LiftAutoCmd(robotLift, LiftConstants.kMidTimmy), new ClawCmd(robotManipulator, () -> 0.4, () -> 1).withTimeout(4.0)),
+        new SwerveControllerCmd(robotDrive, () -> (MathMethods.speedMax2(0.03*limelightSubsystem.getTargetOffsetYLow(), 0.3, 0.03)), 
+          () -> (-MathMethods.speedMax2(0.04*limelightSubsystem.getTargetOffsetXLow(), 0.3, 0.04)),
+          () -> (0.0), ()->(false)).withTimeout(1.5),
+          new ClawCmd(robotManipulator, () -> 0.4, () -> -1));
 
-    var thetaController =
-    new ProfiledPIDController(
-      AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-      thetaController.enableContinuousInput(-Math.PI, Math.PI);
-      
-    //Unfinished 15 pt autonomous - Score preloaded cargo, drive out of commmunity boundary to pick up cargo, drive back to cube node, score new cargo
-    
+
+    //Static Double Score Blue
     /*SequentialCommandGroup doubleScoringAuto = new SequentialCommandGroup(new PipelineSwitch(limelightSubsystem, 0),
       outtakeAutoSeqCmdGrp.getSequentialCommandGroup(robotLift, robotManipulator, pneumaticsSubsystem, LiftConstants.kTimmyHigh), 
         toCargo2AndRetractBlueLeft,
@@ -231,30 +236,18 @@ public class RobotContainer {
           () -> (-MathMethods.speedMax2(0.04*limelightSubsystem.getTargetOffsetXLow(), 0.3, 0.04)),
           () -> (0.0), ()->(false)).withTimeout(1.5),
           new ClawCmd(robotManipulator, () -> 0.4, () -> -1));*/
-
-    SequentialCommandGroup doubleScoringAuto = new SequentialCommandGroup(new PipelineSwitch(limelightSubsystem, 0),
-      outtakeAutoSeqCmdGrp.getSequentialCommandGroup(robotLift, robotManipulator, pneumaticsSubsystem, LiftConstants.kTimmyHigh), 
-        toCargo2AndRetractBlueLeft,
-        captureCargo,
-        new ParallelCommandGroup(new SequentialCommandGroup(
-                    //new DriveToPointCmd(robotDrive, () -> (Trajectories.blueDoubleScoreResetPose), Constants.holonomicDrive, null, null, null).withTimeout(2.0), 
-                    robotDrive.AutoCommandFactory(Trajectories.blueTopReturnCargo)), 
-          new LiftAutoCmd(robotLift, LiftConstants.kMidTimmy), new ClawCmd(robotManipulator, () -> 0.4, () -> 1).withTimeout(1.5)),
-        new SwerveControllerCmd(robotDrive, () -> (MathMethods.speedMax2(0.03*limelightSubsystem.getTargetOffsetYLow(), 0.3, 0.03)), 
-          () -> (-MathMethods.speedMax2(0.04*limelightSubsystem.getTargetOffsetXLow(), 0.3, 0.04)),
-          () -> (0.0), ()->(false)).withTimeout(1.5),
-          new ClawCmd(robotManipulator, () -> 0.4, () -> -1));
       
-      Pose2d testTargetPose = new Pose2d(1, -1, new Rotation2d(Math.toRadians(180.0)));
-
-      SequentialCommandGroup testDynamicTrajectoryAuto = new SequentialCommandGroup(new DriveToPointCmd(robotDrive, () -> (testTargetPose), Constants.holonomicDrive, 2.0, null, null, null),
-                                                                                            robotDrive.AutoCommandFactory(Trajectories.dynamicTrajectoryTestP1));
+  
 
 
 
+      //SINGLE SCORE AUTO
       SequentialCommandGroup singleScoreAuto = new SequentialCommandGroup(outtakeAutoSeqCmdGrp.getSequentialCommandGroup(robotLift, robotManipulator, pneumaticsSubsystem, LiftConstants.kTimmyHigh),
       RetractManipSeqCmdGrp.getSequentialCommandGroup(robotLift, pneumaticsSubsystem));
 
+
+
+      //SINGLE SCORE + DRIVE BACK AUTO
       SequentialCommandGroup singleScoreBlueThenBackLeft = new SequentialCommandGroup(outtakeAutoSeqCmdGrp.getSequentialCommandGroup(robotLift, robotManipulator, pneumaticsSubsystem, LiftConstants.kTimmyHigh),
       RetractManipSeqCmdGrp.getSequentialCommandGroup(robotLift, pneumaticsSubsystem), robotDrive.AutoCommandFactory(Trajectories.backAutoBlueLeft));
       
@@ -268,14 +261,8 @@ public class RobotContainer {
       RetractManipSeqCmdGrp.getSequentialCommandGroup(robotLift, pneumaticsSubsystem), robotDrive.AutoCommandFactory(Trajectories.backAutoRedRight));
 
 
-    SequentialCommandGroup driveBackAutoRedLeft = robotDrive.AutoCommandFactory(Trajectories.backAutoRedLeft);
-    SequentialCommandGroup driveBackAutoBlueLeft = robotDrive.AutoCommandFactory(Trajectories.backAutoBlueLeft);
-    SequentialCommandGroup driveBackAutoRedRight = robotDrive.AutoCommandFactory(Trajectories.backAutoRedRight);
-    SequentialCommandGroup driveBackAutoBlueRight = robotDrive.AutoCommandFactory(Trajectories.backAutoBlueRight);
 
-    //Add autonomous commands to drop-down selector on ShuffleBoard
-    SequentialCommandGroup backToBalAndBalTest = new SequentialCommandGroup(robotDrive.AutoCommandFactory(Trajectories.backToBalTest), new SwerveControllerCmd(robotDrive, true));
-
+    //VOID AUTO
     SwerveControllerCmd blank = new SwerveControllerCmd(
       robotDrive,
       () -> 0.0,
@@ -285,21 +272,19 @@ public class RobotContainer {
 
     
     
-    //autoChooser.setDefaultOption("Drive Back Blue", driveBackAutoBlue);
-    //autoChooser.addOption("Drive back Red", driveBackAutoRed);
-    //autoChooser.addOption("Prepare To Pounce", prepareToPounceTest);
+    //ADD AUTONOMOUS COMMANDS TO SHUFFLEBOARD
     autoChooser.addOption("Void", blank);
-    //autoChooser.addOption("Blue Top To Cargo", blueTopToChargeCmd);
+
     autoChooser.addOption("[TEST] Auto Balance", new SwerveControllerCmd(robotDrive, true));
-    autoChooser.addOption("Test Auto Balance", new SwerveControllerCmd(robotDrive, true));
-    //autoChooser.addOption("Drive Back Retract Blue", driveBackRetractBlueLeft);
-    //autoChooser.addOption("Charge Up test", blueTopToChargeUpCmd);
+
     autoChooser.addOption("21 PT Blue Left", fullTwentyOnePtAutonomousBlueLeft);
     autoChooser.addOption("21 PT Blue Right", fullTwentyOnePtAutonomousBlueRight);
     autoChooser.addOption("21 PT Red Right", fullTwentyOnePtAutonomousRedRight);
     autoChooser.addOption("21 PT Red Left", fullTwentyOnePtAutonomousRedLeft);
+    
     autoChooser.addOption("Single Score Final", singleScoreAuto);
-    autoChooser.addOption("Double Scoring Auto", doubleScoringAuto);    
+
+    autoChooser.addOption("Blue Double Score", blueDoubleScoreAuto);    
 
     autoChooser.addOption("[TEST] S Curve Auto", S_Curve);
     autoChooser.addOption("Single Score Drive Back Blue Left", singleScoreBlueThenBackLeft);
@@ -307,22 +292,10 @@ public class RobotContainer {
     autoChooser.addOption("Single Score Drive Back Blue Right", singleScoreBlueThenBackRight);
     autoChooser.addOption("Single Score Drive Back Red Right", singleScoreRedThenBackRight);
 
-    autoChooser.addOption("Test Trajectory Dynamic Auto", testDynamicTrajectoryAuto);
-
-    autoChooser.addOption("CubePipeline", new PipelineSwitch(limelightSubsystem, 0));
-
-    autoChooser.addOption("[TEST] Back and bal", backToBalAndBalTest);
 
     SmartDashboard.putData(autoChooser);
-/* 
-    lightingChooser.addOption("Rainbow", new rainbow(lightingSubsystem));
-    lightingChooser.addOption("Rainbow From Mid", new rainbowFromMid(lightingSubsystem));
-    lightingChooser.addOption("BiPride", new BiPrideCmd(lightingSubsystem));
-    lightingChooser.setDefaultOption("CargoSignal", new CargoSignalCmd(lightingSubsystem, pneumaticsSubsystem));
-    lightingChooser.addOption("Trans Pride", new TransPrideCmd(lightingSubsystem));
 
-    SmartDashboard.putData(lightingChooser);
-*/
+
   
     // Configure the button bindings
     configureButtonBindings();
@@ -352,8 +325,6 @@ public class RobotContainer {
     
     new JoystickButton(operatorController, Buttons.L3).whileTrue(new RumbleCmd(driverController, 1, 1.00));
     new JoystickButton(operatorController, Buttons.R3).whileTrue(new RumbleCmd(driverController, 2, 1.00));
-    
-
 
     new JoystickButton(driverController, Buttons.RB).toggleOnTrue(new SullyCmd(pneumaticsSubsystem));
 
@@ -400,15 +371,12 @@ public class RobotContainer {
       () -> false), new ClawCmd(robotManipulator, ()->0.7, ()->1)));
 
     //Align robot to AprilTag
-    new JoystickButton(driverController, Buttons.Maria).whileTrue(new SwerveControllerCmd(robotDrive, () -> (MathMethods.speedMax2(0.05*limelightSubsystem.getTargetOffsetYLow(), 0.3, 0.03)), 
-    () -> (-MathMethods.speedMax2(0.05*limelightSubsystem.getTargetOffsetXLow(), 0.3, 0.03)),
+    new JoystickButton(driverController, Buttons.Maria).whileTrue(new SwerveControllerCmd(robotDrive, () -> (MathMethods.speedMax2(0.05*limelightSubsystem.getTargetOffsetYLow(), 0.3, 0.01)), 
+    () -> (-MathMethods.speedMax2(0.05*limelightSubsystem.getTargetOffsetXLow(), 0.3, 0.02)),
     () -> (0.0), ()->(false)));
     
     new JoystickButton(driverController, Buttons.Menu).toggleOnTrue(new PipelineSwitch(limelightSubsystem, 1));
 
-
-    //Reset lift bounds in case of error
-    //new JoystickButton(driverController, Buttons.B).toggleOnTrue(new ResetLiftBoundsCmd(robotLift));
 
     //Slow drive with d-pad
     new POVButton(driverController, Buttons.DOWN_ARR).whileTrue(new SwerveControllerCmd(robotDrive, () -> -DriveConstants.kSlowDriveCoefficient, () -> 0.0, () -> 0.0, () -> true));
@@ -440,9 +408,5 @@ public class RobotContainer {
     return autoChooser.getSelected();
 
   }
-/* 
-  public Command getLightsCommand() {
-    return lightingChooser.getSelected();
-  }
-*/
+
 }

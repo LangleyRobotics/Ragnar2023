@@ -1,25 +1,19 @@
 package frc.robot;
 
-import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import frc.robot.Constants;
 
 
-//Custum holonic drive controller
-//PID controller for each direction
-//Profiled PID controller for the angular direction
-
+//Custom holonomic drive controller
+//PID controller for translation
+//PID controller for rotation
 
 public class CustomHolonomicDrive {
     private Pose2d m_poseError = new Pose2d();
-    private Pose2d m_poseTolerance = new Pose2d(0.05, 0.05, new Rotation2d(Math.toRadians(0.2)));
-    private double kControlFactorTranslation = 0.2;
-    private double kControlFactorRotation = 0.2;
+    private Pose2d m_poseDeadband = new Pose2d(0.1, 0.1, new Rotation2d(Math.toRadians(0.8)));
     
     private final PIDController m_XYController;
     private final PIDController m_ThetaController;
@@ -42,15 +36,20 @@ public class CustomHolonomicDrive {
         double x = xFeedback;
         double y = yFeedback;
 
-        double mag = Math.sqrt((x * x) + (y * y));
-
-        //double xF = x / mag;
-        //double yF = y / mag;
-
         return ChassisSpeeds.fromFieldRelativeSpeeds(x * Constants.kMaxSpeedMetersPerSecond,
                                                         y * Constants.kMaxSpeedMetersPerSecond,
-                                                        thetaFeedback * 2.0,
+                                                        thetaFeedback * 1.5,
                                                         currentPose.getRotation());
+    }
+
+    public boolean targetPoseAchieved() {
+        final var translationError = m_poseError.getTranslation();
+        final var translationDeadband = m_poseDeadband.getTranslation();
+        final var rotationError = m_poseError.getRotation();
+        final var rotationDeadband = m_poseDeadband.getRotation();
+        return Math.abs(translationError.getX()) < translationDeadband.getX()
+            && Math.abs(translationError.getY()) < translationDeadband.getY()
+            && Math.abs(rotationError.getDegrees()) < rotationDeadband.getDegrees();
     }
     
 }

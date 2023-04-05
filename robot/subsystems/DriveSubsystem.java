@@ -128,12 +128,6 @@ public class DriveSubsystem extends SubsystemBase {
       }, aprilPose2d);
   }
 
-  public Trajectory OTFGen(List<Translation2d> transList, Pose2d endPose, TrajectoryConfig config) {
-    System.out.println(getPose().getX());
-    System.out.println(getPose().getY());
-    System.out.println(getPose().getRotation().getDegrees());
-    return TrajectoryGenerator.generateTrajectory(getPose(), transList, endPose, config);
-  }
   
   //Command Factory In Subsystem Test
   public SequentialCommandGroup AutoCommandFactory(Trajectory path) {
@@ -160,17 +154,14 @@ public class DriveSubsystem extends SubsystemBase {
       return SequentialCommandOutput;
   }
 
-  public SequentialCommandGroup AutoCommandFactory(Trajectory path, boolean blah) {
+  public SequentialCommandGroup AutoCommandFactory(Trajectory path, Boolean isPathPlanner, Pose2d startPose) {
     var thetaController =
     new ProfiledPIDController(
       AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
       
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-      TrajectoryGenerator.generateTrajectory(getPose(), 
-        List.of(new Translation2d(5.3, 4.75)), 
-        new Pose2d(2.43, 4.75, new Rotation2d(Math.toRadians(181))), 
-        Trajectories.reverseLameConfig),
+      path,
       this::getPose, // Functional interface to feed supplier
       DriveConstants.kDriveKinematics,
       // Position controllers
@@ -180,9 +171,9 @@ public class DriveSubsystem extends SubsystemBase {
       this::setModuleStates,
       this);
 
-      SequentialCommandGroup SequentialCommandOutput = new SequentialCommandGroup(new InstantCommand(() -> resetOdometry(getPose())),
-                                                                                  swerveControllerCommand,
-                                                                                  new InstantCommand(() -> stopModules()));
+      SequentialCommandGroup SequentialCommandOutput = new SequentialCommandGroup(new InstantCommand(() -> resetOdometry(startPose)),
+                                                                                    swerveControllerCommand,
+                                                                                    new InstantCommand(() -> stopModules()));
       System.out.println(path.getInitialPose());
       return SequentialCommandOutput;
   }

@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.Constants.AutoConstants;
 
 public class MathMethods {
     public static final double Tau = 2*Math.PI;
@@ -22,20 +21,6 @@ public class MathMethods {
 
     //Define acceleration paramaters for auto-level
     //Use  AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond as accelCap to implement in balance funtion
-    /*public static double speedMax(double initVel, double maxSpeed, double deadband, double minSpeed, double angle) 
-    {
-        if (Math.abs(initVel) > maxSpeed) {
-            return maxSpeed*((Math.abs(initVel))/initVel);
-        } else if (Math.abs(initVel) < minSpeed && Math.abs(initVel) > Math.abs(AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond*Math.sin(Math.toRadians(deadband)))) {
-            return signDouble(initVel)*minSpeed;
-        }
-        else if (Math.abs(initVel) < Math.abs(AutoConstants.kAutoBalanceMaxSpeedMetersPerSecond*Math.sin(Math.toRadians(deadband)))) {
-            return 0;
-        } else {
-            return initVel;
-        }
-    }*/
-
     public static double speedMax(double initVel, double maxSpeed, double deadband, double minSpeed, Supplier<Double> angle) 
     {
         if (Math.abs(initVel) > maxSpeed) {

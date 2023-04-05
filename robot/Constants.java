@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -138,7 +137,7 @@ public final class Constants {
     public static final double kMinLiftPosition = 0.765;
     public static final double kIntakeLiftPosition = 0.805;
     public static final double kLiftEncoderBreakpoint = 0.5;
-    public static final double kConeShelfSetPoint = 0.962;
+    public static final double kConeShelfSetPoint = 0.975;
     public static final double kMidTimmy = 0.935;
     public static final double kMaxLiftPosition = 1.025;
 
